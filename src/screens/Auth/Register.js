@@ -9,7 +9,7 @@ import {
   Alert,
   Dimensions,
 } from 'react-native';
-import React, {use, useRef, useState} from 'react';
+import React, {useState} from 'react';
 import {colors} from '../../theme/colors/colors';
 import {fonts} from '../../theme/fonts/fonts';
 import Button from '../../components/Button/Button';
@@ -51,7 +51,10 @@ const Register = () => {
   const handleRegister = async () => {
     try {
       if (!formData.phone) {
-        Alert.alert('Enter phone number');
+        Toast.show({
+          type: 'info',
+          text1: 'Enter phone number',
+        });
         return;
       }
 
@@ -81,7 +84,7 @@ const Register = () => {
       });
     }
 
-    console.log('Registered Data: ', formData);
+    // console.log('Registered Data: ', formData);
   };
 
   return (

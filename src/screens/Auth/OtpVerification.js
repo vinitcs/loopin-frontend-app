@@ -1,11 +1,4 @@
-import {
-  StyleSheet,
-  View,
-  Text,
-  Dimensions,
-  ScrollView,
-  Alert,
-} from 'react-native';
+import {StyleSheet, View, Text, Dimensions, ScrollView} from 'react-native';
 import React, {useState} from 'react';
 import {colors} from '../../theme/colors/colors';
 import {fonts} from '../../theme/fonts/fonts';
@@ -26,6 +19,7 @@ const {height: screenHeight} = Dimensions.get('window');
 
 const OtpVerification = () => {
   const [otp, setOtp] = useState('');
+  const [isVerifying, setIsVerifying] = useState(false);
   const navigation = useNavigation();
   const route = useRoute();
   const dispatch = useDispatch();
@@ -42,18 +36,23 @@ const OtpVerification = () => {
 
   const handleVerify = async () => {
     if (!otp.trim()) {
-      Alert.alert('Please enter the OTP');
+      Toast.show({
+        type: 'info',
+        text1: 'Please enter the OTP',
+      });
       return;
     }
 
     try {
       if (!confirmationResult) {
-        Alert.alert(
-          'Error',
-          'Confirmation session expired. Please resend OTP.',
-        );
+        Toast.show({
+          type: 'info',
+          text1: 'Confirmation session expired. Please resend OTP',
+        });
         return;
       }
+
+      setIsVerifying(true);
 
       const userCredential = await confirmationResult.confirm(otp);
       const idToken = await userCredential.user.getIdToken(true);
@@ -164,6 +163,8 @@ const OtpVerification = () => {
           text1: error.message || 'Something went wrong.',
         });
       }
+    } finally {
+      setIsVerifying(false);
     }
   };
 
@@ -197,7 +198,7 @@ const OtpVerification = () => {
               <Text style={styles.resendText}>try again</Text>
             </View>
             <Button
-              Title={buttonTitle}
+              Title={isVerifying ? 'Verifying...' : buttonTitle}
               BackgroundColor={'Primary'}
               TextColor={'Text3'}
               onPressChanges={handleVerify}

@@ -31,12 +31,15 @@ const Login = () => {
     password: '',
   });
 
+  const [isLogging, setIsLogging] = useState(false);
+
   const handleInputChange = (field, value) => {
     setFormData({...formData, [field]: value});
   };
 
   const handleLogin = async () => {
     // console.log('login data...', formData);
+    setIsLogging(true);
     try {
       // console.log('###### working login #########');
       if (!formData.phone) {
@@ -108,6 +111,8 @@ const Login = () => {
         type: 'error',
         text1: error.message || 'Something went wrong. Please try again.',
       });
+    } finally {
+      setIsLogging(false);
     }
   };
 
@@ -147,7 +152,7 @@ const Login = () => {
               onChangeState={text => handleInputChange('password', text)}
             />
             <Button
-              Title={'Log In'}
+              Title={isLogging ? 'Logging...' : 'Log In'}
               BackgroundColor={'Primary'}
               TextColor={'Text3'}
               onPressChanges={handleLogin}

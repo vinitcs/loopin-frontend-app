@@ -1,10 +1,4 @@
-import {
-  StyleSheet,
-  Text,
-  View,
-  TouchableOpacity,
-  BackHandler,
-} from 'react-native';
+import {StyleSheet, View, BackHandler} from 'react-native';
 import React, {
   forwardRef,
   useCallback,
@@ -17,7 +11,6 @@ import BottomSheet, {BottomSheetBackdrop} from '@gorhom/bottom-sheet';
 import {colors} from '../../theme/colors/colors';
 import {useNavigation} from '@react-navigation/native';
 import CityDropdown from '../../components/GeoData/CityDropdown';
-import {fonts} from '../../theme/fonts/fonts';
 import Button from '../Button/Button';
 import SearchUser from '../../components/Search/SearchUser';
 import SearchHashtag from '../../components/Search/SearchHashtag';
@@ -160,7 +153,12 @@ const BottomSheetView = forwardRef((props, ref) => {
             />
           </>
         )}
-        {mode === 'comment' && <Comments />}
+        {mode === 'comment' && (
+          <Comments
+            contentType={sheetData?.contentType}
+            contentId={sheetData?.contentId}
+          />
+        )}
         {mode === 'mention-user' && (
           <DisplayUserList postId={sheetData?.postId} />
         )}

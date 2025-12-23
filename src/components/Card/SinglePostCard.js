@@ -185,7 +185,10 @@ export const SinglePostCard = React.memo(
     };
 
     const openCommentSheet = () => {
-      bottomSheetRef.current?.openSheet('comment', {}, ['100%']);
+      bottomSheetRef.current?.openSheet('comment', {
+        contentType: 'post',
+        contentId: postId,
+      }, ['100%']);
     };
 
     const openMentionUserSheet = () => {
