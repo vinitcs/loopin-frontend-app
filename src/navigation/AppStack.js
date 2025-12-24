@@ -15,7 +15,7 @@ import {
 } from 'lucide-react-native';
 import HomeScreen from '../screens/HomeScreen';
 import CreateScreen from '../screens/CreateScreen';
-import CalendarScreen from '../screens/CalendarScreen';
+import VisitProfileScreen from '../screens/VisitProfileScreen';
 import ProfileScreen from '../screens/ProfileScreen';
 import NotificationScreen from '../screens/NotificationScreen';
 import SearchScreen from '../screens/SearchScreen';
@@ -32,9 +32,7 @@ const Stack = createNativeStackNavigator();
 //     </SafeAreaView>
 //   );
 // };
-const TabNavigator = () => {
-  const bottomSheetRef = useRef(null);
-
+const TabNavigator = ({bottomSheetRef}) => {
   return (
     <>
       <Tab.Navigator
@@ -123,19 +121,29 @@ const TabNavigator = () => {
           )}
         </Tab.Screen>
       </Tab.Navigator>
-
-      {/* Bottom Sheet Component */}
-      <BottomSheetView ref={bottomSheetRef} />
     </>
   );
 };
 
 const AppStack = () => {
+  const bottomSheetRef = useRef(null);
+
   return (
-    <Stack.Navigator screenOptions={{headerShown: false}}>
-      <Stack.Screen name="Tabs" component={TabNavigator} />
-      {/* <Stack.Screen name="Notification" component={NotificationScreen} /> */}
-    </Stack.Navigator>
+    <>
+      <Stack.Navigator screenOptions={{headerShown: false}}>
+        <Stack.Screen name="Tabs">
+          {props => <TabNavigator {...props} bottomSheetRef={bottomSheetRef} />}
+        </Stack.Screen>
+        <Stack.Screen name="VisitProfile">
+          {props => (
+            <VisitProfileScreen {...props} bottomSheetRef={bottomSheetRef} />
+          )}
+        </Stack.Screen>
+      </Stack.Navigator>
+
+      {/* Bottom Sheet Component */}
+      <BottomSheetView ref={bottomSheetRef} />
+    </>
   );
 };
 

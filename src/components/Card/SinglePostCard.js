@@ -32,7 +32,7 @@ import Video from 'react-native-video';
 import {colors} from '../../theme/colors/colors';
 import {fonts} from '../../theme/fonts/fonts';
 import {getTimeAgo} from '../../utils/DateTime/getTimeAgo';
-import {useIsFocused} from '@react-navigation/native';
+import {useIsFocused, useNavigation} from '@react-navigation/native';
 import Toast from 'react-native-toast-message';
 import api from '../../api/apiInstance';
 
@@ -94,6 +94,7 @@ export const SinglePostCard = React.memo(
     postCommentCount,
     postDate,
     isLoggedUserCreated,
+    showFollowBtn = true,
     isLoggedUserFollow,
     hashTags,
     mentionedUsersCount,
@@ -102,7 +103,7 @@ export const SinglePostCard = React.memo(
   }) => {
     // console.log('single post card render');
 
-    // console.log('single post card data:::', userInfo);
+    // console.log('post card data:::', );
 
     const isScreenFocused = useIsFocused();
     // const navigation = useNavigation();
@@ -118,10 +119,11 @@ export const SinglePostCard = React.memo(
     const [descriptionExpand, setDescriptionExpand] = useState(false);
     const [isPostLiked, setIsPostLiked] = useState(isLiked);
     const [likeCount, setLikeCount] = useState(postLikeCount);
-    const [commentCount, setCommentCount] = useState(postCommentCount)
+    const [commentCount, setCommentCount] = useState(postCommentCount);
     const [userFollowStatus, setUserFollowStatus] =
       useState(isLoggedUserFollow);
     const imageLoadingRef = useRef({}); // track loading without re-render
+    const navigation = useNavigation();
 
     // const handleOpenPost = async () => {
     //   const role = await EncryptedStorage.getItem('Role');
@@ -186,11 +188,15 @@ export const SinglePostCard = React.memo(
     };
 
     const openCommentSheet = () => {
-      bottomSheetRef.current?.openSheet('comment', {
-        contentType: 'post',
-        contentId: postId,
-        onCommentCountChange: setCommentCount,
-      }, ['100%']);
+      bottomSheetRef.current?.openSheet(
+        'comment',
+        {
+          contentType: 'post',
+          contentId: postId,
+          onCommentCountChange: setCommentCount,
+        },
+        ['100%'],
+      );
     };
 
     const openMentionUserSheet = () => {
@@ -333,7 +339,12 @@ export const SinglePostCard = React.memo(
       >
         {/* User Info */}
         <View style={styles.userInfoWrapper}>
-          <View style={styles.sectionPair}>
+          <TouchableOpacity
+            style={styles.sectionPair}
+            disabled={isLoggedUserCreated}
+            onPress={() => {
+              navigation.navigate('VisitProfile', {targetUserId: userInfo._id});
+            }}>
             <Image
               source={
                 userInfo.avatar
@@ -347,8 +358,9 @@ export const SinglePostCard = React.memo(
               <Text style={styles.username}>{userInfo?.name || ''}</Text>
               <Text style={styles.userNameTag}>{userInfo?.nameTag || ''}</Text>
             </View>
-          </View>
-          {!isLoggedUserCreated && (
+          </TouchableOpacity>
+          
+          {showFollowBtn && !isLoggedUserCreated && (
             <View style={styles.sectionPair}>
               <TouchableOpacity
                 onPress={() => handleUserFollow(userInfo._id)}

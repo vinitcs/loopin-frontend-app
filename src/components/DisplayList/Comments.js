@@ -16,6 +16,7 @@ import api from '../../api/apiInstance';
 import {BottomSheetFlatList} from '@gorhom/bottom-sheet';
 import {getTimeAgo} from '../../utils/DateTime/getTimeAgo';
 import {Heart, ChevronDown, ChevronUp, Send, X} from 'lucide-react-native';
+import {useNavigation} from '@react-navigation/native';
 
 const Comments = ({contentType, contentId, onCommentCountChange}) => {
   const [parentComments, setParentComments] = useState([]);
@@ -36,8 +37,9 @@ const Comments = ({contentType, contentId, onCommentCountChange}) => {
   // Separate pagination states for each reply thread
   const [replyPages, setReplyPages] = useState({});
   const [replyHasMore, setReplyHasMore] = useState({});
-
   const limit = 20;
+
+  const navigation = useNavigation();
 
   const fetchParentComments = async (page = 1) => {
     if (isLoading) return;
@@ -457,14 +459,22 @@ const Comments = ({contentType, contentId, onCommentCountChange}) => {
         <View style={styles.replyLine} />
         <View style={styles.replyContent}>
           <View style={styles.sectionGroup}>
-            <Image
-              source={
-                item.userProfile?.avatar
-                  ? {uri: item.userProfile.avatar}
-                  : require('../../assets/blank-profile-pic.png')
-              }
-              style={styles.replyAvatar}
-            />
+            <TouchableOpacity
+              disabled={item.isLoggedUserComment}
+              onPress={() => {
+                navigation.navigate('VisitProfile', {
+                  targetUserId: item.userProfile._id,
+                });
+              }}>
+              <Image
+                source={
+                  item.userProfile?.avatar
+                    ? {uri: item.userProfile.avatar}
+                    : require('../../assets/blank-profile-pic.png')
+                }
+                style={styles.replyAvatar}
+              />
+            </TouchableOpacity>
             <View style={styles.commentSection}>
               <View style={styles.sectionPair}>
                 <View>
@@ -473,21 +483,6 @@ const Comments = ({contentType, contentId, onCommentCountChange}) => {
                     <Text style={styles.commentTime}>
                       {getTimeAgo(item.createdAt)}
                     </Text>
-                    {item.isLoggedUserComment && (
-                      <TouchableOpacity
-                        style={styles.deleteCommentBtn}
-                        onPress={() =>
-                          deleteComment({
-                            contentType: item.contentType,
-                            contentId: item.contentId,
-                            commentId: item._id,
-                            isParent: false,
-                            parentCommentId: item.parentCommentId,
-                          })
-                        }>
-                        <Text style={styles.deleteCommentBtnLabel}>Delete</Text>
-                      </TouchableOpacity>
-                    )}
                   </View>
                   <Text style={styles.userNameTag}>
                     {item.userProfile.nameTag}
@@ -495,6 +490,24 @@ const Comments = ({contentType, contentId, onCommentCountChange}) => {
                 </View>
               </View>
               <Text style={styles.commentText}>{item.comment}</Text>
+
+              <View style={styles.actionSection}>
+                {item.isLoggedUserComment && (
+                  <TouchableOpacity
+                    // style={styles.deleteCommentBtn}
+                    onPress={() =>
+                      deleteComment({
+                        contentType: item.contentType,
+                        contentId: item.contentId,
+                        commentId: item._id,
+                        isParent: false,
+                        parentCommentId: item.parentCommentId,
+                      })
+                    }>
+                    <Text style={styles.deleteCommentBtnLabel}>Delete</Text>
+                  </TouchableOpacity>
+                )}
+              </View>
             </View>
           </View>
           <View style={styles.actionSection}>
@@ -529,14 +542,22 @@ const Comments = ({contentType, contentId, onCommentCountChange}) => {
       <View style={styles.parentCommentWrapper}>
         <View style={styles.commentContainer}>
           <View style={styles.sectionGroup}>
-            <Image
-              source={
-                item.userProfile?.avatar
-                  ? {uri: item.userProfile.avatar}
-                  : require('../../assets/blank-profile-pic.png')
-              }
-              style={styles.avatar}
-            />
+            <TouchableOpacity
+              disabled={item.isLoggedUserComment}
+              onPress={() => {
+                navigation.navigate('VisitProfile', {
+                  targetUserId: item.userProfile._id,
+                });
+              }}>
+              <Image
+                source={
+                  item.userProfile?.avatar
+                    ? {uri: item.userProfile.avatar}
+                    : require('../../assets/blank-profile-pic.png')
+                }
+                style={styles.avatar}
+              />
+            </TouchableOpacity>
             <View style={styles.commentSection}>
               <View style={styles.sectionPair}>
                 <View>
@@ -545,20 +566,6 @@ const Comments = ({contentType, contentId, onCommentCountChange}) => {
                     <Text style={styles.commentTime}>
                       {getTimeAgo(item.createdAt)}
                     </Text>
-                    {item.isLoggedUserComment && (
-                      <TouchableOpacity
-                        style={styles.deleteCommentBtn}
-                        onPress={() =>
-                          deleteComment({
-                            contentType: item.contentType,
-                            contentId: item.contentId,
-                            commentId: item._id,
-                            isParent: true,
-                          })
-                        }>
-                        <Text style={styles.deleteCommentBtnLabel}>Delete</Text>
-                      </TouchableOpacity>
-                    )}
                   </View>
                   <Text style={styles.userNameTag}>
                     {item.userProfile.nameTag}
@@ -589,14 +596,31 @@ const Comments = ({contentType, contentId, onCommentCountChange}) => {
                 </TouchableOpacity>
               )}
 
-              <TouchableOpacity
-                style={styles.replyBtn}
-                onPress={() => handleReply(item._id, item.userProfile.name)}>
-                <Text style={styles.replyBtnLabel}>Reply</Text>
-              </TouchableOpacity>
+              <View style={styles.actionSection}>
+                <TouchableOpacity
+                  style={styles.replyBtn}
+                  onPress={() => handleReply(item._id, item.userProfile.name)}>
+                  <Text style={styles.replyBtnLabel}>Reply</Text>
+                </TouchableOpacity>
+
+                {item.isLoggedUserComment && (
+                  <TouchableOpacity
+                    // style={styles.deleteCommentBtn}
+                    onPress={() =>
+                      deleteComment({
+                        contentType: item.contentType,
+                        contentId: item.contentId,
+                        commentId: item._id,
+                        isParent: true,
+                      })
+                    }>
+                    <Text style={styles.deleteCommentBtnLabel}>Delete</Text>
+                  </TouchableOpacity>
+                )}
+              </View>
             </View>
           </View>
-          <View style={styles.actionSection}>
+          <View>
             <TouchableOpacity
               onPress={() => handleLikeComment(item._id, true, null)}
               style={styles.likeButton}>
@@ -824,10 +848,17 @@ const styles = StyleSheet.create({
     color: colors.Text2,
     fontFamily: fonts.Regular,
   },
-  showReplyBtn: {
-    marginTop: 6,
-    alignSelf: 'flex-start',
+  actionSection: {
+    paddingTop: 4,
+    // alignItems: 'center',
+    flexDirection: 'row',
+    justifyContent: 'flex-start',
+    gap: 8,
   },
+  // showReplyBtn: {
+  // marginTop: 6,
+  // alignSelf: 'flex-start',
+  // },
   showReplyBtnLabel: {
     fontSize: 12,
     color: colors.Text2,
@@ -838,11 +869,19 @@ const styles = StyleSheet.create({
     color: colors.Primary,
     fontFamily: fonts.Medium,
   },
-  actionSection: {
-    paddingTop: 4,
-    alignItems: 'center',
-    justifyContent: 'flex-start',
+
+  // deleteCommentBtn: {
+  //   backgroundColor: colors.Background3,
+  //   borderRadius: 8,
+  //   paddingHorizontal: 6,
+  // },
+
+  deleteCommentBtnLabel: {
+    color: colors.Highlight3,
+    fontSize: 12,
+    fontFamily: fonts.Regular,
   },
+
   likeButton: {
     alignItems: 'center',
     gap: 4,
@@ -885,18 +924,6 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
   },
 
-  deleteCommentBtn: {
-    backgroundColor: colors.Background3,
-    borderRadius: 8,
-    paddingHorizontal: 6,
-  },
-
-  deleteCommentBtnLabel: {
-    color: colors.Highlight3,
-    fontSize: 10,
-    fontFamily: fonts.Regular,
-  },
-
   // Comment Input styles
   commentInputSection: {
     position: 'absolute',
@@ -910,8 +937,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     paddingHorizontal: 12,
-    paddingVertical: 6,
-    backgroundColor: colors.Background2,
+    paddingVertical: 10,
+    backgroundColor: colors.Background3,
     borderRadius: 8,
     marginBottom: 8,
   },
