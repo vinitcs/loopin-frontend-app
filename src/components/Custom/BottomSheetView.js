@@ -157,6 +157,7 @@ const BottomSheetView = forwardRef((props, ref) => {
           <Comments
             contentType={sheetData?.contentType}
             contentId={sheetData?.contentId}
+            onCommentCountChange={sheetData?.onCommentCountChange}
           />
         )}
         {mode === 'mention-user' && (

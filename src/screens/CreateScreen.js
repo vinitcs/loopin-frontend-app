@@ -95,7 +95,7 @@ const CreateScreen = ({bottomSheetRef}) => {
         navigation.navigate('Home');
       }
     } catch (error) {
-      console.log('create post error:::', error);
+      // console.log('create post error:::', error);
 
       const status = error?.response?.status;
       const commonClientErrors = [400, 403, 404];

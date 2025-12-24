@@ -17,7 +17,7 @@ import {BottomSheetFlatList} from '@gorhom/bottom-sheet';
 import {getTimeAgo} from '../../utils/DateTime/getTimeAgo';
 import {Heart, ChevronDown, ChevronUp, Send, X} from 'lucide-react-native';
 
-const Comments = ({contentType, contentId}) => {
+const Comments = ({contentType, contentId, onCommentCountChange}) => {
   const [parentComments, setParentComments] = useState([]);
   const [expandedComments, setExpandedComments] = useState({});
   const [replyComments, setReplyComments] = useState({});
@@ -37,8 +37,6 @@ const Comments = ({contentType, contentId}) => {
   const [replyPages, setReplyPages] = useState({});
   const [replyHasMore, setReplyHasMore] = useState({});
 
-  const [currentPage, setCurrentPage] = useState(1);
-  const [hasMore, setHasMore] = useState(true);
   const limit = 20;
 
   const fetchParentComments = async (page = 1) => {
@@ -212,6 +210,11 @@ const Comments = ({contentType, contentId}) => {
           // Refresh parent comments
           await fetchParentComments(1);
         }
+
+        // update comment count to reflect in content UI
+        if (onCommentCountChange) {
+          onCommentCountChange(prev => prev + 1);
+        }
       }
     } catch (error) {
       const status = error?.response?.status;
@@ -284,6 +287,93 @@ const Comments = ({contentType, contentId}) => {
     }
   };
 
+  const deleteComment = async ({
+    contentType,
+    contentId,
+    commentId,
+    isParent = true,
+    parentCommentId = null,
+  }) => {
+    try {
+      console.log('comment delete//////', contentType, contentId, commentId);
+      const res = await api.delete(
+        `/api/v1/action/comment/delete?contentType=${contentType}&contentId=${contentId}&commentId=${commentId}`,
+      );
+
+      if (res.data.success) {
+        if (isParent) {
+          setParentComments(prev =>
+            prev.filter(comment => comment._id !== commentId),
+          );
+
+          // Update comment count
+          if (onCommentCountChange) {
+            onCommentCountChange(prev => prev - 1);
+          }
+        } else {
+          //Update the parent's replies
+          setReplyComments(prev => ({
+            ...prev,
+            [parentCommentId]: prev[parentCommentId]?.filter(
+              comment => comment._id !== commentId,
+            ),
+          }));
+
+          // Update parent comment reply count
+          setParentComments(prev =>
+            prev.map(comment =>
+              comment._id === parentCommentId
+                ? {
+                    ...comment,
+                    replyCommentCount: Math.max(
+                      0,
+                      (comment.replyCommentCount || 0) - 1,
+                    ),
+                  }
+                : comment,
+            ),
+          );
+
+          // Update comment count
+          if (onCommentCountChange) {
+            onCommentCountChange(prev => prev - 1);
+          }
+        }
+        Toast.show({
+          type: 'success',
+          text1: res.data.message,
+        });
+      } else {
+        Toast.show({
+          type: 'error',
+          text1: res.data.message,
+        });
+      }
+    } catch (error) {
+      const status = error?.response?.status;
+      const commonClientErrors = [400, 401, 403, 404];
+
+      if (commonClientErrors.includes(status)) {
+        return Toast.show({
+          type: 'error',
+          text1: error.response?.data?.message || 'Invalid request',
+        });
+      }
+
+      if (status >= 500) {
+        return Toast.show({
+          type: 'error',
+          text1: 'Server error. Please try again.',
+        });
+      }
+
+      return Toast.show({
+        type: 'error',
+        text1: error.message || 'Something went wrong. Please try again.',
+      });
+    }
+  };
+
   const handleLikeComment = async (
     commentId,
     isParent = true,
@@ -333,7 +423,7 @@ const Comments = ({contentType, contentId}) => {
         });
       }
     } catch (error) {
-      console.log(error.message);
+      // console.log(error.message);
 
       const status = error?.response?.status;
       const commonClientErrors = [400, 401, 403, 404];
@@ -360,6 +450,8 @@ const Comments = ({contentType, contentId}) => {
   };
 
   const renderReplyComment = ({item}) => {
+    // console.log("reply comment item:::", item);
+
     return (
       <View style={styles.replyCommentContainer}>
         <View style={styles.replyLine} />
@@ -381,6 +473,21 @@ const Comments = ({contentType, contentId}) => {
                     <Text style={styles.commentTime}>
                       {getTimeAgo(item.createdAt)}
                     </Text>
+                    {item.isLoggedUserComment && (
+                      <TouchableOpacity
+                        style={styles.deleteCommentBtn}
+                        onPress={() =>
+                          deleteComment({
+                            contentType: item.contentType,
+                            contentId: item.contentId,
+                            commentId: item._id,
+                            isParent: false,
+                            parentCommentId: item.parentCommentId,
+                          })
+                        }>
+                        <Text style={styles.deleteCommentBtnLabel}>Delete</Text>
+                      </TouchableOpacity>
+                    )}
                   </View>
                   <Text style={styles.userNameTag}>
                     {item.userProfile.nameTag}
@@ -416,6 +523,8 @@ const Comments = ({contentType, contentId}) => {
     const hasMoreReplies = replyHasMore[item._id];
     const repliesShown = replies.length;
 
+    // console.log("parent comment", item.isLoggedUserComment);
+
     return (
       <View style={styles.parentCommentWrapper}>
         <View style={styles.commentContainer}>
@@ -436,6 +545,20 @@ const Comments = ({contentType, contentId}) => {
                     <Text style={styles.commentTime}>
                       {getTimeAgo(item.createdAt)}
                     </Text>
+                    {item.isLoggedUserComment && (
+                      <TouchableOpacity
+                        style={styles.deleteCommentBtn}
+                        onPress={() =>
+                          deleteComment({
+                            contentType: item.contentType,
+                            contentId: item.contentId,
+                            commentId: item._id,
+                            isParent: true,
+                          })
+                        }>
+                        <Text style={styles.deleteCommentBtnLabel}>Delete</Text>
+                      </TouchableOpacity>
+                    )}
                   </View>
                   <Text style={styles.userNameTag}>
                     {item.userProfile.nameTag}
@@ -539,7 +662,7 @@ const Comments = ({contentType, contentId}) => {
     <View style={styles.container}>
       <Text style={styles.title}>Comments</Text>
 
-      {isLoading && currentPage === 1 ? (
+      {isLoading && parentCurrentPage === 1 ? (
         <View style={styles.centerLoader}>
           <ActivityIndicator size="large" color={colors.Primary} />
           <Text style={styles.loadingText}>Loading comments...</Text>
@@ -760,6 +883,18 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: 8,
     paddingVertical: 12,
+  },
+
+  deleteCommentBtn: {
+    backgroundColor: colors.Background3,
+    borderRadius: 8,
+    paddingHorizontal: 6,
+  },
+
+  deleteCommentBtnLabel: {
+    color: colors.Highlight3,
+    fontSize: 10,
+    fontFamily: fonts.Regular,
   },
 
   // Comment Input styles

@@ -118,6 +118,7 @@ export const SinglePostCard = React.memo(
     const [descriptionExpand, setDescriptionExpand] = useState(false);
     const [isPostLiked, setIsPostLiked] = useState(isLiked);
     const [likeCount, setLikeCount] = useState(postLikeCount);
+    const [commentCount, setCommentCount] = useState(postCommentCount)
     const [userFollowStatus, setUserFollowStatus] =
       useState(isLoggedUserFollow);
     const imageLoadingRef = useRef({}); // track loading without re-render
@@ -188,6 +189,7 @@ export const SinglePostCard = React.memo(
       bottomSheetRef.current?.openSheet('comment', {
         contentType: 'post',
         contentId: postId,
+        onCommentCountChange: setCommentCount,
       }, ['100%']);
     };
 
@@ -464,7 +466,7 @@ export const SinglePostCard = React.memo(
                 onPress={openCommentSheet}>
                 <MessageCircle size={24} />
               </TouchableOpacity>
-              <Text style={styles.actionFeatureText}>{postCommentCount}</Text>
+              <Text style={styles.actionFeatureText}>{commentCount}</Text>
             </View>
 
             {mentionedUsersCount > 0 && (
