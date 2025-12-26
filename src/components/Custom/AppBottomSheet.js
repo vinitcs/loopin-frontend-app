@@ -1,4 +1,4 @@
-import {StyleSheet, View, BackHandler} from 'react-native';
+import {StyleSheet, View, BackHandler, Text} from 'react-native';
 import React, {
   forwardRef,
   useCallback,
@@ -16,8 +16,9 @@ import SearchUser from '../../components/Search/SearchUser';
 import SearchHashtag from '../../components/Search/SearchHashtag';
 import DisplayUserList from '../../components/DisplayList/DisplayUserList';
 import Comments from '../../components/DisplayList/Comments';
+import Settings from '../DisplayList/Settings';
 
-const BottomSheetView = forwardRef((props, ref) => {
+const AppBottomSheet = forwardRef((props, ref) => {
   const navigation = useNavigation();
   const bottomSheetRef = useRef(null);
   const [sheetIndex, setSheetIndex] = useState(-1); // track current sheet index
@@ -188,12 +189,14 @@ const BottomSheetView = forwardRef((props, ref) => {
             bottomSheetRef={bottomSheetRef}
           />
         )}
+
+        {mode === 'settings' && <Settings bottomSheetRef={bottomSheetRef} />}
       </View>
     </BottomSheet>
   );
 });
 
-export default BottomSheetView;
+export default AppBottomSheet;
 
 const styles = StyleSheet.create({
   sheetContainer: {

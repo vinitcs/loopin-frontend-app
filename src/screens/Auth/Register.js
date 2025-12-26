@@ -76,7 +76,7 @@ const Register = () => {
         // },
       });
     } catch (error) {
-      console.error('Error sending OTP:', error);
+      // console.error('Error sending OTP:', error);
 
       Toast.show({
         type: 'error',

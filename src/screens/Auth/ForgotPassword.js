@@ -1,11 +1,4 @@
-import {
-  StyleSheet,
-  View,
-  Text,
-  Dimensions,
-  ScrollView,
-  Alert,
-} from 'react-native';
+import {StyleSheet, View, Text, Dimensions, ScrollView} from 'react-native';
 import React, {useState} from 'react';
 import {colors} from '../../theme/colors/colors';
 import {fonts} from '../../theme/fonts/fonts';
@@ -15,6 +8,7 @@ import {useNavigation} from '@react-navigation/native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import Header from '../../components/Custom/Header';
 import auth from '@react-native-firebase/auth';
+import Toast from 'react-native-toast-message';
 
 const {height: screenHeight} = Dimensions.get('window');
 
@@ -25,7 +19,10 @@ const ForgotPassword = () => {
   const handleSubmit = async () => {
     try {
       if (!phone) {
-        Alert.alert('Enter phone number');
+        Toast.show({
+          type: 'info',
+          text1: 'Enter phone number',
+        });
         return;
       }
       const confirmation = await auth().signInWithPhoneNumber(phone);
@@ -43,8 +40,11 @@ const ForgotPassword = () => {
         // },
       });
     } catch (error) {
-      console.error('Error sending OTP:', error);
-      Alert.alert('Failed to send OTP', error.message);
+      // console.error('Error sending OTP:', error);
+      Toast.show({
+        type: 'error',
+        text1: error.message,
+      });
     }
   };
 

@@ -24,7 +24,7 @@ api.interceptors.request.use(async config => {
     }
     return config;
   } catch (error) {
-    console.error('Error fetching access token:', error);
+    // console.error('Error fetching access token:', error);
     return config;
   }
 });
@@ -69,7 +69,7 @@ api.interceptors.response.use(
           await EncryptedStorage.clear();
         }
       } catch (refreshError) {
-        console.error('Token refresh failed:', refreshError.message);
+        // console.error('Token refresh failed:', refreshError.message);
         await EncryptedStorage.clear();
       }
     }

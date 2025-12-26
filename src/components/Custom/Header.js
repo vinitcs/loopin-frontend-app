@@ -1,16 +1,25 @@
 import {StyleSheet, Text, View, TouchableOpacity} from 'react-native';
 import React from 'react';
 import {colors} from '../../theme/colors/colors';
-import {Bell} from 'lucide-react-native';
+import {Bell, EllipsisVertical} from 'lucide-react-native';
 import {useNavigation} from '@react-navigation/native';
 import GoBackIcon from '../GoBackIcon/GoBackIcon';
 import {fonts} from '../../theme/fonts/fonts';
 
-const Header = ({showAppLogo = true, showBell = false}) => {
+const Header = ({
+  showAppLogo = true,
+  showBell = false,
+  showEllipsisVertical = false,
+  bottomSheetRef,
+}) => {
   const navigation = useNavigation();
 
   const navigateTo = () => {
     navigation.navigate('Notification');
+  };
+
+  const openSettingSheet = () => {
+    bottomSheetRef.current?.openSheet('settings', ['50%']);
   };
   return (
     <View style={styles.container}>
@@ -36,6 +45,16 @@ const Header = ({showAppLogo = true, showBell = false}) => {
               style={styles.actionFeatureIcon}
               onPress={navigateTo}>
               <Bell color={colors.Primary} fill={colors.Primary} size={20} />
+            </TouchableOpacity>
+          )}
+
+          {showEllipsisVertical && (
+            <TouchableOpacity onPress={openSettingSheet}>
+              <EllipsisVertical
+                color={colors.Primary}
+                fill={colors.Primary}
+                size={20}
+              />
             </TouchableOpacity>
           )}
         </View>

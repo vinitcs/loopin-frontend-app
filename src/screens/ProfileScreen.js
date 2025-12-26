@@ -11,12 +11,11 @@ import {
 } from 'react-native';
 import {Icon} from '@rneui/themed';
 import React, {useCallback, useMemo, useEffect, useRef, useState} from 'react';
-import Button from '../components/Button/Button';
 import {logout} from '../redux/slices/authSlice';
 import EncryptedStorage from 'react-native-encrypted-storage';
 import api from '../api/apiInstance';
 import {useDispatch, useSelector} from 'react-redux';
-import {useFocusEffect, useNavigation} from '@react-navigation/native';
+import {useFocusEffect} from '@react-navigation/native';
 import {colors} from '../theme/colors/colors';
 import Header from '../components/Custom/Header';
 import {fonts} from '../theme/fonts/fonts';
@@ -29,7 +28,6 @@ const {height: screenHeight} = Dimensions.get('window');
 
 const ProfileScreen = ({bottomSheetRef}) => {
   const dispatch = useDispatch();
-  const navigation = useNavigation();
   const {pickFromCamera, pickFromGallery} = useMediaPicker();
 
   const [profileData, setProfileData] = useState([]);
@@ -71,7 +69,7 @@ const ProfileScreen = ({bottomSheetRef}) => {
         onCameraPress: handlePickFromCamera,
         onGalleryPress: handlePickFromGallery,
       },
-      ['30'],
+      ['30%'],
     );
   };
 
@@ -246,35 +244,6 @@ const ProfileScreen = ({bottomSheetRef}) => {
     }
   };
 
-  const handleLogout = async () => {
-    try {
-      const res = await api.post('/api/v1/user/logout');
-
-      if (res.data?.success) {
-        await EncryptedStorage.removeItem('AccessToken');
-        await EncryptedStorage.removeItem('RefreshToken');
-        await EncryptedStorage.removeItem('Role');
-
-        dispatch(logout());
-        navigation.navigate('HomeScreen');
-        Toast.show({
-          type: 'success',
-          text1: res.data.message,
-        });
-      } else {
-        Toast.show({
-          type: 'error',
-          text1: res.data.message || 'Unknown error',
-        });
-      }
-    } catch (error) {
-      Toast.show({
-        type: 'error',
-        text1: error?.response?.data?.message || 'Error during logout',
-      });
-    }
-  };
-
   useFocusEffect(
     useCallback(() => {
       fetchProfileData();
@@ -348,11 +317,6 @@ const ProfileScreen = ({bottomSheetRef}) => {
               <View style={styles.userProfileHandle}>
                 <Text style={styles.userName}>{profileData?.name}</Text>
                 <Text style={styles.userNameTag}>{profileData?.nameTag}</Text>
-                <TouchableOpacity style={styles.actionProfileEditBtn}>
-                  <Text style={styles.actionProfileEditBtnLabel}>
-                    Edit Profile
-                  </Text>
-                </TouchableOpacity>
               </View>
 
               <View style={styles.profileInfoStatsSection}>
@@ -406,13 +370,6 @@ const ProfileScreen = ({bottomSheetRef}) => {
 
           {/* </View> */}
         </View>
-
-        {/* <Button
-            Title={'Log out'}
-            BackgroundColor={'Primary'}
-            TextColor={'Text3'}
-            onPressChanges={handleLogout}
-            /> */}
       </View>
     );
   };
@@ -537,7 +494,11 @@ const ProfileScreen = ({bottomSheetRef}) => {
 
   return (
     <View style={styles.container}>
-      <Header showAppLogo={true} />
+      <Header
+        showAppLogo={true}
+        showEllipsisVertical={true}
+        bottomSheetRef={bottomSheetRef}
+      />
       {renderLoggedUserContent()}
     </View>
   );
@@ -614,21 +575,6 @@ const styles = StyleSheet.create({
     fontSize: 12,
   },
 
-  actionProfileEditBtn: {
-    backgroundColor: colors.Background3,
-    position: 'absolute',
-    top: 2,
-    right: 0,
-    paddingVertical: 4,
-    paddingHorizontal: 6,
-    borderRadius: 6,
-  },
-
-  actionProfileEditBtnLabel: {
-    fontFamily: fonts.Medium,
-    fontSize: 10,
-    color: colors.Text1,
-  },
   profileInfoStatsSection: {
     // backgroundColor: 'yellow',
     flexDirection: 'row',
@@ -659,6 +605,7 @@ const styles = StyleSheet.create({
   bioText: {
     fontSize: 12,
     fontFamily: fonts.Medium,
+    color: colors.Text1
   },
   bioExpandbtn: {
     alignSelf: 'flex-start',

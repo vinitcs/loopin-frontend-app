@@ -568,6 +568,7 @@ const styles = StyleSheet.create({
   bioText: {
     fontSize: 12,
     fontFamily: fonts.Medium,
+    color: colors.Text1,
   },
   bioExpandbtn: {
     alignSelf: 'flex-start',

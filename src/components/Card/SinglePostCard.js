@@ -491,16 +491,16 @@ export const SinglePostCard = React.memo(
               </View>
             )}
 
-            <View style={styles.actionFeaturePair}>
+            {/* <View style={styles.actionFeaturePair}>
               <TouchableOpacity style={styles.actionFeatureIcon}>
                 <Share2 size={22} />
               </TouchableOpacity>
-            </View>
+            </View> */}
           </View>
 
-          <TouchableOpacity style={styles.actionFeatureIcon}>
+          {/* <TouchableOpacity style={styles.actionFeatureIcon}>
             <Icon name="bookmark-outline" type="ionicon" size={24} />
-          </TouchableOpacity>
+          </TouchableOpacity> */}
         </View>
 
         {/* Description */}

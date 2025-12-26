@@ -19,7 +19,9 @@ import VisitProfileScreen from '../screens/VisitProfileScreen';
 import ProfileScreen from '../screens/ProfileScreen';
 import NotificationScreen from '../screens/NotificationScreen';
 import SearchScreen from '../screens/SearchScreen';
-import BottomSheetView from '../components/Custom/BottomSheetView';
+import AppBottomSheet from '../components/Custom/AppBottomSheet';
+import EditProfileScreen from '../screens/EditProfileScreen';
+import EditNametagScreen from '../screens/EditNametagScreen';
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
@@ -139,10 +141,16 @@ const AppStack = () => {
             <VisitProfileScreen {...props} bottomSheetRef={bottomSheetRef} />
           )}
         </Stack.Screen>
+        <Stack.Screen name="EditProfile">
+          {props => <EditProfileScreen />}
+        </Stack.Screen>
+        <Stack.Screen name="EditNametag">
+          {props => <EditNametagScreen />}
+        </Stack.Screen>
       </Stack.Navigator>
 
       {/* Bottom Sheet Component */}
-      <BottomSheetView ref={bottomSheetRef} />
+      <AppBottomSheet ref={bottomSheetRef} />
     </>
   );
 };
