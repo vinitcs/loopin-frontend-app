@@ -25,6 +25,7 @@ const UserInput = ({
   isPassword,
   placeholder,
   value,
+  isEditable=true,
   showChips = true,
   chipType,
   chips = [],
@@ -174,6 +175,7 @@ const UserInput = ({
               selectionColor={colors.lightText}
               keyboardType="phone-pad"
               value={phoneNumber}
+              editable={isEditable}
               onChangeText={handlePhoneChange}
               style={styles.input}
             />
@@ -215,6 +217,7 @@ const UserInput = ({
                 selectionColor={colors.lightText}
                 autoFocus={focus}
                 value={value}
+                editable={isEditable}
                 onChangeText={onChangeState}
                 secureTextEntry={!passwordVisible && isPassword}
                 style={styles.input}

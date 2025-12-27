@@ -142,7 +142,8 @@ const Login = () => {
               placeholder={'Enter phone'}
               focus={true}
               onChangeState={text => handleInputChange('phone', text)}
-            />
+              isEditable={!isLogging}
+              />
             <UserInput
               placeholder={'Enter password'}
               leftIcon={true}
@@ -150,6 +151,7 @@ const Login = () => {
               rightIcon={true}
               isPassword={true}
               onChangeState={text => handleInputChange('password', text)}
+              isEditable={!isLogging}
             />
             <Button
               Title={isLogging ? 'Logging...' : 'Log In'}

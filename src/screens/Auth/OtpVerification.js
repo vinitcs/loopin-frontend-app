@@ -197,6 +197,7 @@ const OtpVerification = () => {
               leftIconName={'shield-outline'}
               value={otp}
               onChangeState={text => setOtp(text)}
+              isEditable={!isVerifying}
             />
 
             <View style={styles.resendSection}>

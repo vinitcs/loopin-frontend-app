@@ -397,7 +397,7 @@ const CreateScreen = ({bottomSheetRef}) => {
                 onChangeText={text =>
                   setNewPost({...newPost, description: text})
                 }
-                //   editable={!isCreatingPost}
+                editable={!isCreatingPost}
               />
 
               {/* Tag people */}
@@ -414,6 +414,7 @@ const CreateScreen = ({bottomSheetRef}) => {
                 chips={selectedUsers}
                 onChangeState={handleTagUserSelection}
                 onRemoveChip={handleRemoveUser}
+                isEditable={!isCreatingPost}
               />
 
               {/* Add hashtags */}
@@ -430,6 +431,7 @@ const CreateScreen = ({bottomSheetRef}) => {
                 chips={selectedHashtags}
                 onChangeState={handleHashtagSelection}
                 onRemoveChip={handleRemoveHashtag}
+                isEditable={!isCreatingPost}
               />
 
               {/* <View style={styles.switchContainer}>

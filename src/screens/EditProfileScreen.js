@@ -1,5 +1,5 @@
 import DateTimePicker from '@react-native-community/datetimepicker';
-import {useFocusEffect, useNavigation} from '@react-navigation/native';
+import {useFocusEffect} from '@react-navigation/native';
 import React, {useCallback, useState} from 'react';
 import {
   View,
@@ -19,6 +19,7 @@ import Button from '../components/Button/Button';
 import Header from '../components/Custom/Header';
 import {colors} from '../theme/colors/colors';
 import {fonts} from '../theme/fonts/fonts';
+import UserInput from '../components/Credentials/UserInput';
 
 const EditProfileScreen = () => {
   const [showDatePicker, setShowDatePicker] = useState(false);
@@ -159,15 +160,12 @@ const EditProfileScreen = () => {
           {/* Name Field */}
           <View style={styles.fieldContainer}>
             <Text style={styles.label}>Name</Text>
-            <TextInput
-              style={styles.input}
-              placeholder="Enter name"
+            <UserInput
+              placeholder={'Enter name'}
+              leftIcon={false}
               value={form.name}
-              onChangeText={text => handleInputChange('name', text)}
-              textContentType="name"
-              autoCompleteType="name"
-              autoCorrect={false}
-              editable={!uploading}
+              onChangeState={text => handleInputChange('name', text)}
+              isEditable={!uploading}
             />
           </View>
 
@@ -191,14 +189,11 @@ const EditProfileScreen = () => {
           {/* Email Field (Read-only) */}
           <View style={styles.fieldContainer}>
             <Text style={styles.label}>Email Address</Text>
-            <TextInput
-              style={styles.input}
-              placeholder="Enter email"
+            <UserInput
+              placeholder={'Enter email'}
               value={form.email}
-              onChangeText={text => handleInputChange('email', text)}
-              textContentType="emailAddress"
-              autoCompleteType="email"
-              editable={!uploading}
+              onChangeState={text => handleInputChange('email', text)}
+              isEditable={!uploading}
             />
           </View>
 
@@ -240,11 +235,7 @@ const EditProfileScreen = () => {
           {/* Phone Field */}
           <View style={styles.fieldContainer}>
             <Text style={styles.label}>Phone</Text>
-            <TextInput
-              style={[styles.input, {backgroundColor: colors.Background3}]}
-              editable={false}
-              value={phone}
-            />
+            <UserInput value={phone} readOnly={true} />
             <Text style={styles.helperText}>Phone cannot be changed</Text>
           </View>
 

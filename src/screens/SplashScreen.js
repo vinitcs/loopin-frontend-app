@@ -18,9 +18,9 @@ const SplashScreen = () => {
         style={styles.logo}
         resizeMode="contain"
       />
-      <Text style={styles.title}>Loopin</Text>
+      <Text style={styles.title}>LoopIn</Text>
       <Text style={styles.subtitle}>
-         Stay in the Loop — Post. Connect. Share.
+        Stay in the Loop — Post. Connect. Share.
       </Text>
     </View>
   );
@@ -37,14 +37,15 @@ const styles = StyleSheet.create({
     height: 120,
     width: 120,
     marginBottom: 20,
+    borderRadius: 60,
   },
   title: {
     fontSize: 22,
     fontFamily: fonts.SemiBold,
-    color: colors.Text1,
+    color: colors.Primary,
     textAlign: 'center',
-},
-subtitle: {
+  },
+  subtitle: {
     fontSize: 14,
     fontFamily: fonts.Medium,
     color: colors.Text2,
