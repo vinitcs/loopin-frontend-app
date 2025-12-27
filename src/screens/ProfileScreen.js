@@ -75,7 +75,7 @@ const ProfileScreen = ({bottomSheetRef}) => {
 
   const fetchProfileData = async () => {
     try {
-      const token = await EncryptedStorage.getItem('AccessToken');
+      const token = await EncryptedStorage.getItem('accessToken');
 
       if (!token) {
         dispatch(logout());
@@ -100,7 +100,7 @@ const ProfileScreen = ({bottomSheetRef}) => {
       }
     } catch (error) {
       if (error.response?.status === 401) {
-        await EncryptedStorage.removeItem('AccessToken');
+        await EncryptedStorage.removeItem('accessToken');
       } else {
         Toast.show({
           type: 'error',
@@ -126,7 +126,7 @@ const ProfileScreen = ({bottomSheetRef}) => {
         setIsLoading(true);
       }
 
-      const token = await EncryptedStorage.getItem('AccessToken');
+      const token = await EncryptedStorage.getItem('accessToken');
 
       if (!token) {
         dispatch(logout());
@@ -166,7 +166,7 @@ const ProfileScreen = ({bottomSheetRef}) => {
       }
     } catch (error) {
       if (error.response?.status === 401) {
-        await EncryptedStorage.removeItem('AccessToken');
+        await EncryptedStorage.removeItem('accessToken');
       } else {
         Toast.show({
           type: 'error',
@@ -230,7 +230,7 @@ const ProfileScreen = ({bottomSheetRef}) => {
           type: 'info',
           text1: 'Token expired. Logging out...',
         });
-        await EncryptedStorage.removeItem('AccessToken');
+        await EncryptedStorage.removeItem('accessToken');
       }
 
       if (commonClientErrors.includes(status)) {

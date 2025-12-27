@@ -23,7 +23,7 @@ const RootNavigation = () => {
   const checkAuthStatus = async () => {
     try {
       console.log('Checking authentication....');
-      const token = await EncryptedStorage.getItem('AccessToken');
+      const token = await EncryptedStorage.getItem('accessToken');
 
       // console.log('stored access token:::', token);
 
@@ -38,7 +38,7 @@ const RootNavigation = () => {
       } catch (error) {
         if (error.response?.status === 401) {
           // Wait a moment in case interceptor refreshed token
-          const newAccessToken = await EncryptedStorage.getItem('AccessToken');
+          const newAccessToken = await EncryptedStorage.getItem('accessToken');
           if (newAccessToken) {
             console.log('Retrying verify after token refresh...');
             res = await api.post('/api/v1/auth/verify/access-token');

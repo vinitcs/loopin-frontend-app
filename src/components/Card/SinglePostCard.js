@@ -126,7 +126,7 @@ export const SinglePostCard = React.memo(
     const navigation = useNavigation();
 
     // const handleOpenPost = async () => {
-    //   const role = await EncryptedStorage.getItem('Role');
+    //   const role = await EncryptedStorage.getItem('role');
     //   console.log('role', role, postId);
     //   navigation.navigate('PostDetails', {postId});
     // };

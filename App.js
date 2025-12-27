@@ -1,5 +1,5 @@
 import React, {useEffect} from 'react';
-import {StatusBar, StyleSheet, useColorScheme, View} from 'react-native';
+import {StatusBar, StyleSheet, useColorScheme, View, Text} from 'react-native';
 import {
   SafeAreaProvider,
   SafeAreaView,
@@ -13,6 +13,10 @@ import {GestureHandlerRootView} from 'react-native-gesture-handler';
 import Toast, {BaseToast, ErrorToast} from 'react-native-toast-message';
 import {colors} from './src/theme/colors/colors';
 import {fonts} from './src/theme/fonts/fonts';
+import messaging from '@react-native-firebase/messaging';
+import {requestNotificationPermission} from './src/utils/Permissions/permissionService';
+import {getFCMToken, listenTokenRefresh} from './src/utils/FCM/fcmService';
+import {registerForegroundHandlers} from './src/utils/FCM/notificationHandler';
 
 const toastConfig = {
   success: props => (
@@ -63,6 +67,26 @@ const App = () => {
   // const isDarkMode = useColorScheme() === 'dark';
   useEffect(() => {
     SplashScreen.hide();
+
+    const initFCM = async () => {
+      await requestNotificationPermission();
+      await messaging().registerDeviceForRemoteMessages();
+      const token = await getFCMToken();
+
+      console.log('FCM Token:', token);
+    };
+
+    initFCM();
+    const unsubscribeTokenRefresh = listenTokenRefresh();
+
+    return () => {
+      unsubscribeTokenRefresh?.();
+    };
+  }, []);
+
+  useEffect(() => {
+    const unsubscribe = registerForegroundHandlers();
+    return unsubscribe;
   }, []);
 
   return (

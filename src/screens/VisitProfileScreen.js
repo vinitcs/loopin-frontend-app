@@ -51,7 +51,7 @@ const VisitProfileScreen = ({bottomSheetRef}) => {
   const fetchProfileData = async () => {
     if (!targetUserId) return;
     try {
-      const token = await EncryptedStorage.getItem('AccessToken');
+      const token = await EncryptedStorage.getItem('accessToken');
 
       if (!token) {
         dispatch(logout());
@@ -78,7 +78,7 @@ const VisitProfileScreen = ({bottomSheetRef}) => {
       }
     } catch (error) {
       if (error.response?.status === 401) {
-        await EncryptedStorage.removeItem('AccessToken');
+        await EncryptedStorage.removeItem('accessToken');
       } else {
         Toast.show({
           type: 'error',
@@ -105,7 +105,7 @@ const VisitProfileScreen = ({bottomSheetRef}) => {
         setIsLoading(true);
       }
 
-      const token = await EncryptedStorage.getItem('AccessToken');
+      const token = await EncryptedStorage.getItem('accessToken');
 
       if (!token) {
         dispatch(logout());
@@ -140,7 +140,7 @@ const VisitProfileScreen = ({bottomSheetRef}) => {
       }
     } catch (error) {
       if (error.response?.status === 401) {
-        await EncryptedStorage.removeItem('AccessToken');
+        await EncryptedStorage.removeItem('accessToken');
       } else {
         Toast.show({
           type: 'error',

@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   ScrollView,
   Dimensions,
+  Platform,
 } from 'react-native';
 import React, {useState} from 'react';
 import {colors} from '../../theme/colors/colors';
@@ -19,6 +20,7 @@ import EncryptedStorage from 'react-native-encrypted-storage';
 import {useDispatch} from 'react-redux';
 import {login} from '../../redux/slices/authSlice';
 import Toast from 'react-native-toast-message';
+import { getFCMToken } from '../../utils/FCM/fcmService';
 
 const {height: screenHeight} = Dimensions.get('window');
 
@@ -58,10 +60,13 @@ const Login = () => {
         return;
       }
 
+      const deviceToken = await getFCMToken();
+
       const payload = {
         phone: formData.phone,
         password: formData.password,
-        deviceToken: 'dummy-fcm-token',
+        deviceToken,
+        deviceType: Platform.OS,
         longitude: '0',
         latitude: '0',
       };
@@ -73,8 +78,8 @@ const Login = () => {
       if (response.data?.success) {
         const {accessToken, refreshToken} = response.data;
 
-        await EncryptedStorage.setItem('AccessToken', accessToken);
-        await EncryptedStorage.setItem('RefreshToken', refreshToken);
+        await EncryptedStorage.setItem('accessToken', accessToken);
+        await EncryptedStorage.setItem('refreshToken', refreshToken);
 
         dispatch(login());
 

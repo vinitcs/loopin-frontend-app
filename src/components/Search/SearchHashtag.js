@@ -73,7 +73,7 @@ const SearchHashtag = ({
           type: 'info',
           text1: 'Token expired. Logging out...',
         });
-        await EncryptedStorage.removeItem('AccessToken');
+        await EncryptedStorage.removeItem('accessToken');
       }
 
       if (commonClientErrors.includes(status)) {

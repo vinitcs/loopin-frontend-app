@@ -49,7 +49,7 @@ const HomeScreen = ({bottomSheetRef}) => {
         setIsLoading(true);
       }
 
-      const token = await EncryptedStorage.getItem('AccessToken');
+      const token = await EncryptedStorage.getItem('accessToken');
 
       if (!token) {
         dispatch(logout());
@@ -89,7 +89,7 @@ const HomeScreen = ({bottomSheetRef}) => {
       const status = error?.response?.status;
       const commonClientErrors = [400, 401, 403, 404];
       if (commonClientErrors.includes(status)) {
-        await EncryptedStorage.removeItem('AccessToken');
+        await EncryptedStorage.removeItem('accessToken');
       } else {
         Toast.show({
           type: 'error',

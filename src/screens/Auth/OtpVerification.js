@@ -1,4 +1,11 @@
-import {StyleSheet, View, Text, Dimensions, ScrollView} from 'react-native';
+import {
+  StyleSheet,
+  View,
+  Text,
+  Dimensions,
+  ScrollView,
+  Platform,
+} from 'react-native';
 import React, {useState} from 'react';
 import {colors} from '../../theme/colors/colors';
 import {fonts} from '../../theme/fonts/fonts';
@@ -10,10 +17,11 @@ import {SafeAreaView} from 'react-native-safe-area-context';
 import api from '../../api/apiInstance';
 import EncryptedStorage from 'react-native-encrypted-storage';
 import {useDispatch} from 'react-redux';
-import {login, logout} from '../../redux/slices/authSlice';
+import {login, setUserRoles} from '../../redux/slices/authSlice';
 // import auth from '@react-native-firebase/auth';
 import Header from '../../components/Custom/Header';
 import Toast from 'react-native-toast-message';
+import {getFCMToken} from '../../utils/FCM/fcmService';
 
 const {height: screenHeight} = Dimensions.get('window');
 
@@ -62,11 +70,14 @@ const OtpVerification = () => {
           try {
             const {name, phone, password} = formData;
 
+            const deviceToken = await getFCMToken();
+
             const payload = {
               name,
               phone,
               password,
-              deviceToken: 'dummy-fcm-token',
+              deviceToken,
+              deviceType: Platform.OS,
               idToken,
               longitude: '0',
               latitude: '0',
@@ -75,16 +86,13 @@ const OtpVerification = () => {
             const response = await api.post('/api/v1/user/signup', payload);
 
             if (response.data?.success) {
-              const {accessToken, refreshToken, role} = response.data;
+              const {accessToken, refreshToken, userRoles} = response.data;
 
-              // Get active role name (check === true)
-              const activeRole = role.find(r => r.check)?.name || null;
+              await EncryptedStorage.setItem('accessToken', accessToken);
+              await EncryptedStorage.setItem('refreshToken', refreshToken);
 
-              await EncryptedStorage.setItem('AccessToken', accessToken);
-              await EncryptedStorage.setItem('RefreshToken', refreshToken);
-              await EncryptedStorage.setItem('Role', JSON.stringify(role));
-
-              dispatch(login({userRole: activeRole}));
+              dispatch(login());
+              dispatch(setUserRoles(userRoles));
 
               Toast.show({
                 type: 'success',

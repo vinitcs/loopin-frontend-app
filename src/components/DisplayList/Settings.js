@@ -20,8 +20,8 @@ const Settings = ({bottomSheetRef}) => {
       bottomSheetRef.current?.close();
 
       if (res.data?.success) {
-        await EncryptedStorage.removeItem('AccessToken');
-        await EncryptedStorage.removeItem('RefreshToken');
+        await EncryptedStorage.removeItem('accessToken');
+        await EncryptedStorage.removeItem('refreshToken');
 
         dispatch(logout());
         Toast.show({

@@ -13,7 +13,7 @@ const api = axios.create({
 // Add token automatically to every request
 api.interceptors.request.use(async config => {
   try {
-    const accessToken = await EncryptedStorage.getItem('AccessToken');
+    const accessToken = await EncryptedStorage.getItem('accessToken');
 
     config.headers = {
       ...config.headers, // preserve multipart/form-data
@@ -41,7 +41,7 @@ api.interceptors.response.use(
       originalRequest._retry = true;
 
       try {
-        const refreshToken = await EncryptedStorage.getItem('RefreshToken');
+        const refreshToken = await EncryptedStorage.getItem('refreshToken');
         if (!refreshToken) {
           console.warn('No refresh token found. Logging out...');
           throw new Error('No refresh token available');
@@ -57,7 +57,7 @@ api.interceptors.response.use(
           const newAccessToken = refreshResponse.data.accessToken;
 
           // Save new access token securely
-          await EncryptedStorage.setItem('AccessToken', newAccessToken);
+          await EncryptedStorage.setItem('accessToken', newAccessToken);
 
           // Update header and retry original request
           originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
