@@ -31,7 +31,7 @@ const Header = ({
             fontFamily: fonts.Bold,
             color: colors.Primary,
           }}>
-          Loopin
+          LoopIn
         </Text>
       ) : (
         <GoBackIcon />

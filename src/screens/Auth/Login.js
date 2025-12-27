@@ -2,7 +2,6 @@ import {
   StyleSheet,
   View,
   Text,
-  Image,
   TouchableOpacity,
   ScrollView,
   Dimensions,
@@ -20,7 +19,7 @@ import EncryptedStorage from 'react-native-encrypted-storage';
 import {useDispatch} from 'react-redux';
 import {login} from '../../redux/slices/authSlice';
 import Toast from 'react-native-toast-message';
-import { getFCMToken } from '../../utils/FCM/fcmService';
+import {getFCMToken} from '../../utils/FCM/fcmService';
 
 const {height: screenHeight} = Dimensions.get('window');
 
@@ -129,14 +128,10 @@ const Login = () => {
         keyboardShouldPersistTaps="handled">
         <View style={styles.contentWrapper}>
           <View style={styles.mainSection}>
-            <Text style={styles.loginTitle}>LOG IN</Text>
+            <Text style={styles.loginTitle}>Log In</Text>
 
             <View style={styles.welcomeContent}>
-              <Text style={styles.welcomeHeaderText}>Welcome To,</Text>
-              <Image
-                style={styles.logo}
-                source={require('../../assets/dummylogo.png')}
-              />
+              <Text style={styles.mainText}>LoopIn</Text>
               <Text style={styles.subText}>
                 Stay in the Loop — Post. Connect. Share.
               </Text>
@@ -212,8 +207,8 @@ const styles = StyleSheet.create({
 
   loginTitle: {
     // backgroundColor:'orange',
-    fontFamily: fonts.SemiBold,
-    fontSize: 22,
+    fontFamily: fonts.Regular,
+    fontSize: 12,
     color: colors.lightText,
     textAlign: 'center',
     marginBottom: 10,
@@ -223,23 +218,16 @@ const styles = StyleSheet.create({
     gap: 10,
     marginBottom: 10,
   },
-  welcomeHeaderText: {
-    color: colors.Text1,
-    fontSize: 12,
+  mainText: {
+    fontSize: 24,
     textAlign: 'center',
-  },
-  logo: {
-    resizeMode: 'contain',
-    width: '100%',
-    height: 30,
-    alignItems: 'center',
+    fontFamily: fonts.Bold,
+    color: colors.Primary,
   },
   subText: {
-    fontSize: 12,
+    fontSize: 10,
     textAlign: 'center',
     fontFamily: fonts.SemiBold,
-    letterSpacing: 0.2,
-    bottom: 4,
   },
 
   forgetPassSection: {

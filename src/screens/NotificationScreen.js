@@ -54,7 +54,7 @@ const NotificationScreen = () => {
       }
 
       const res = await api.get(
-        `/api/v1/notification/all?page=${pageNum}&limit=${limit}`,
+        `/api/v1/notification/get?page=${pageNum}&limit=${limit}`,
       );
 
       if (res.data.success) {

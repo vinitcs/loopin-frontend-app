@@ -113,7 +113,7 @@ const VisitProfileScreen = ({bottomSheetRef}) => {
       }
 
       const res = await api.get(
-        `/api/v1/post/all?userId=${targetUserId}&page=${page}&limit=${limit}`,
+        `/api/v1/post/get?userId=${targetUserId}&page=${page}&limit=${limit}`,
       );
 
       console.log('user content data in profile:::', res.data);

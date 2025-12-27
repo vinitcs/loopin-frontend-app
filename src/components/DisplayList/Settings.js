@@ -57,7 +57,7 @@ const Settings = ({bottomSheetRef}) => {
           <Text style={styles.actionProfileEditBtnLabel}>Edit profile</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity
+        {/* <TouchableOpacity
           style={styles.actionProfileEditBtn}
           onPress={() => {
             navigation.navigate('EditNametag');
@@ -77,7 +77,7 @@ const Settings = ({bottomSheetRef}) => {
           <Text style={styles.actionProfileEditBtnLabel}>
             Terms and conditions
           </Text>
-        </TouchableOpacity>
+        </TouchableOpacity> */}
       </View>
       <TouchableOpacity style={styles.logoutBtn} onPress={handleLogout}>
         <Text style={styles.logoutBtnLabel}>Log out</Text>
@@ -128,7 +128,7 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     alignItems: 'center',
     marginTop: 'auto',
-    marginBottom: 12,
+    marginBottom: 20,
   },
 
   logoutBtnLabel: {

@@ -35,7 +35,7 @@ const ProfileScreen = ({bottomSheetRef}) => {
 
   const [avatarFile, setAvatarFile] = useState([]);
 
-  console.log('AVATAR UPDATE FILE:::', avatarFile[0]);
+  // console.log('AVATAR UPDATE FILE:::', avatarFile[0]);
 
   const {allLoggedUserContent} = useSelector(state => state.content);
   const [isLoading, setIsLoading] = useState(true);
@@ -133,7 +133,7 @@ const ProfileScreen = ({bottomSheetRef}) => {
         return;
       }
 
-      const res = await api.get(`/api/v1/post/all?page=${page}&limit=${limit}`);
+      const res = await api.get(`/api/v1/post/get?page=${page}&limit=${limit}`);
 
       console.log('Logged user content data in profile:::', res.data);
 
