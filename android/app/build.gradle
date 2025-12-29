@@ -94,6 +94,13 @@ android {
             keyAlias 'androiddebugkey'
             keyPassword 'android'
         }
+
+        release {
+            storeFile file(MYAPP_UPLOAD_STORE_FILE)
+            keyAlias MYAPP_UPLOAD_KEY_ALIAS
+            storePassword System.getenv("MYAPP_UPLOAD_STORE_PASSWORD") ?: ""
+            keyPassword System.getenv("MYAPP_UPLOAD_KEY_PASSWORD") ?: ""
+        }
     }
     buildTypes {
         debug {
@@ -102,7 +109,8 @@ android {
         release {
             // Caution! In production, you need to generate your own keystore file.
             // see https://reactnative.dev/docs/signed-apk-android.
-            signingConfig signingConfigs.debug
+            // signingConfig signingConfigs.debug
+            signingConfig signingConfigs.release
             minifyEnabled enableProguardInReleaseBuilds
             proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
         }
@@ -115,6 +123,11 @@ android {
         pickFirst 'lib/x86_64/libc++_shared.so'
         pickFirst 'lib/armeabi-v7a/libc++_shared.so'
     }
+    // sourceSets {
+    //     main {
+    //         assets.srcDirs = ['src/main/assets', 'src/main/assets/']
+    //     }
+    // }
 }
 
 dependencies {
