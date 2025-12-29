@@ -111,7 +111,6 @@ const Register = () => {
               leftIconName={'person-outline'}
               value={formData.name}
               onChangeState={val => handleInputChange('name', val)}
-              isEditable={!isLogging}
             />
 
             <UserInput
