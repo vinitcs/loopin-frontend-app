@@ -82,3 +82,4 @@ yarn-error.log
 # secrets
 
 android/app/google-services.json
+android/app/*.keystore
