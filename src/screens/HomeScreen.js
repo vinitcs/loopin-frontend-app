@@ -155,7 +155,7 @@ const HomeScreen = ({bottomSheetRef}) => {
           isLoggedUserCreated={item.isLoggedUserCreated}
           isLoggedUserFollow={item.isLoggedUserFollow}
           hashTags={item.hashTags}
-          mentionedUsers={item.mentionedUsers}
+          mentionedUsersCount={item.mentionedUsersCount}
           isFocused={item._id === focusedPostId}
           bottomSheetRef={bottomSheetRef}
         />

@@ -9,6 +9,8 @@ import Toast from 'react-native-toast-message';
 const DisplayUserList = ({postId}) => {
   const [users, setUsers] = useState([]);
 
+  console.log('Display mention users:::', users);
+
   const fetchMentionUsers = async () => {
     try {
       const res = await api.get(`/api/v1/post/mention-users/${postId}`);
@@ -127,28 +129,30 @@ const DisplayUserList = ({postId}) => {
                   <Text style={styles.userNameTag}>{item.nameTag || ''}</Text>
                 </View>
               </View>
-              <View style={styles.sectionPair}>
-                <TouchableOpacity
-                  onPress={() => handleUserFollow(item._id)}
-                  style={[
-                    styles.followBtn,
-                    item.isLoggedUserFollow
-                      ? {backgroundColor: colors.Outline}
-                      : {backgroundColor: colors.Primary},
-                  ]}>
-                  <Text
+              {!item.isLoggedUserProfile && (
+                <View style={styles.sectionPair}>
+                  <TouchableOpacity
+                    onPress={() => handleUserFollow(item._id)}
                     style={[
-                      styles.followBtnLabel,
+                      styles.followBtn,
                       item.isLoggedUserFollow
-                        ? {color: colors.Text1}
-                        : {
-                            color: colors.Text3,
-                          },
+                        ? {backgroundColor: colors.Outline}
+                        : {backgroundColor: colors.Primary},
                     ]}>
-                    {item.isLoggedUserFollow ? 'Following' : 'Follow'}
-                  </Text>
-                </TouchableOpacity>
-              </View>
+                    <Text
+                      style={[
+                        styles.followBtnLabel,
+                        item.isLoggedUserFollow
+                          ? {color: colors.Text1}
+                          : {
+                              color: colors.Text3,
+                            },
+                      ]}>
+                      {item.isLoggedUserFollow ? 'Following' : 'Follow'}
+                    </Text>
+                  </TouchableOpacity>
+                </View>
+              )}
             </View>
           </TouchableOpacity>
         )}
