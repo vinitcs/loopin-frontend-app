@@ -74,6 +74,7 @@ const TabNavigator = ({bottomSheetRef}) => {
             headerShown: false,
           }}
         /> */}
+
         <Tab.Screen
           name="Notification"
           component={NotificationScreen}
@@ -85,6 +86,7 @@ const TabNavigator = ({bottomSheetRef}) => {
             headerShown: false,
           }}
         />
+
         <Tab.Screen
           name="Create"
           // component={CreateScreen}
@@ -97,17 +99,20 @@ const TabNavigator = ({bottomSheetRef}) => {
           }}>
           {props => <CreateScreen {...props} bottomSheetRef={bottomSheetRef} />}
         </Tab.Screen>
+
         <Tab.Screen
           name="Search"
-          component={SearchScreen}
+          // component={SearchScreen}
           options={{
             title: 'Search',
             tabBarIcon: ({focused, color, size}) => (
               <Search size={focused ? size + 2 : size} color={color} />
             ),
             headerShown: false,
-          }}
-        />
+          }}>
+          {props => <SearchScreen {...props} bottomSheetRef={bottomSheetRef} />}
+        </Tab.Screen>
+
         <Tab.Screen
           name="Profile"
           // component={ProfileScreen}

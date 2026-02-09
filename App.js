@@ -1,10 +1,6 @@
 import React, {useEffect} from 'react';
-import {StatusBar, StyleSheet, useColorScheme, View, Text} from 'react-native';
-import {
-  SafeAreaProvider,
-  SafeAreaView,
-  useSafeAreaInsets,
-} from 'react-native-safe-area-context';
+import {StyleSheet, View, Text} from 'react-native';
+import {SafeAreaProvider, SafeAreaView} from 'react-native-safe-area-context';
 import SplashScreen from 'react-native-splash-screen';
 import {Provider} from 'react-redux';
 import store from './src/redux/store/store';
@@ -105,9 +101,13 @@ const App = () => {
 };
 
 const SafeAreaWrapper = ({children}) => {
-  const insets = useSafeAreaInsets();
+  // const insets = useSafeAreaInsets(); // use when custom padding is to need pass if custom header/footer/sidebar, For now go with SafeAreaView
   return (
-    <SafeAreaView style={[styles.safeArea, {paddingTop: insets.top}]}>
+    <SafeAreaView
+      style={[
+        styles.safeArea,
+        //  {paddingTop: insets.top}
+      ]}>
       <View style={styles.container}>{children}</View>
     </SafeAreaView>
   );

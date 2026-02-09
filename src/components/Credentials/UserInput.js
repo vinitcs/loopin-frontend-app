@@ -13,6 +13,9 @@ import {fonts} from '../../theme/fonts/fonts';
 import {Icon, Chip} from '@rneui/themed';
 import CountryPicker from 'react-native-country-picker-modal';
 
+/**
+ * User input custom component
+ */
 const UserInput = ({
   focus,
   leftIcon,

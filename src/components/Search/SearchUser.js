@@ -41,7 +41,7 @@ const SearchUser = ({
         );
 
         if (res.data.success) {
-          const usersList = res.data.users || [];
+          const usersList = res.data || [];
 
           if (page === 1) {
             setUsers(usersList);

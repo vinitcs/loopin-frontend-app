@@ -74,7 +74,7 @@ const RootNavigation = () => {
       ) : (
         <NavigationContainer>
           <StatusBar
-            backgroundColor={colors.Background1}
+            backgroundColor={colors.Primary}
             barStyle="dark-content"
           />
           {isAuthenticated ? <AppStack /> : <AuthStack />}
