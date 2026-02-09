@@ -41,6 +41,10 @@ node_modules/
 npm-debug.log
 yarn-error.log
 
+# txt
+
+git-branch.txt
+
 # Ignore secret files
 .env*
 .env
