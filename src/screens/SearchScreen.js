@@ -7,7 +7,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import React, {useCallback, useEffect, useRef, useState} from 'react';
+import React, {useCallback, useEffect, useMemo, useRef, useState} from 'react';
 import {colors} from '../theme/colors/colors';
 import {fonts} from '../theme/fonts/fonts';
 import UserInput from '../components/Credentials/UserInput';
@@ -15,7 +15,7 @@ import Toast from 'react-native-toast-message';
 import EncryptedStorage from 'react-native-encrypted-storage';
 import api from '../api/apiInstance';
 import {SinglePostCard} from '../components/Card/SinglePostCard';
-import {useFocusEffect} from '@react-navigation/native';
+import {useFocusEffect, useNavigation} from '@react-navigation/native';
 
 const SearchScreen = ({bottomSheetRef}) => {
   const [searchQuery, setSearchQuery] = useState('');
@@ -25,106 +25,180 @@ const SearchScreen = ({bottomSheetRef}) => {
   const [isLoadingMore, setIsLoadingMore] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
-
   const [focusedPostId, setFocusedPostId] = useState(null);
 
   const limit = 20;
+  const debounceTimer = useRef(null);
+  const previousTabRef = useRef('Search');
+  const navigation = useNavigation();
+  const isLoadingRef = useRef(false);
 
-  const [debounceTimer, setDebounceTimer] = useState(null);
+  console.log('Search data ///////', searchData);
 
-  console.log('Search data (GLOBAL):::', searchData);
+  const fetchSearchData = useCallback(
+    async (page = 1, search = '', type = '') => {
+      if (isLoadingRef.current) return;
 
-  const fetchSearchData = async (page = 1, search = '', type = '') => {
-    if (isLoading) return;
+      try {
+        isLoadingRef.current = true;
+        setIsLoading(true);
 
-    try {
-      setIsLoading(true);
+        if (search.length > 0) {
+          const res = await api.get(
+            `/api/v1/action/global/search?term=${search}&type=${type}&page=${page}&limit=${limit}`,
+          );
 
-      if (searchQuery.length > 0) {
-        const res = await api.get(
-          `/api/v1/action/global/search?term=${search}&type=${type}&page=${page}&limit=${limit}`,
-        );
+          if (res.data.success) {
+            const searchResultList = res.data.searchData || [];
 
-        if (res.data.success) {
-          const searchResultList = res.data.searchData || [];
+            if (page === 1) {
+              setSearchData(searchResultList);
+            } else {
+              setIsLoadingMore(true);
+              setSearchData(prev => [...prev, ...searchResultList]);
+            }
 
-          if (page === 1) {
-            setSearchData(searchResultList);
+            setHasMore(searchResultList.length === limit);
+            setCurrentPage(page);
           } else {
-            setIsLoadingMore(true);
-            setSearchData(prev => [...prev, ...searchResultList]);
+            if (page === 1) {
+              setSearchData([]);
+            }
           }
-
-          setHasMore(searchResultList.length === limit);
-          setCurrentPage(page);
         } else {
-          setSearchData([]);
-          return;
+          // Only clear if it's a new search (page 1)
+          if (page === 1) {
+            setSearchData([]);
+          }
         }
-      }
-    } catch (error) {
-      const status = error?.response?.status;
-      const commonClientErrors = [400, 403, 404];
+      } catch (error) {
+        const status = error?.response?.status;
+        const commonClientErrors = [400, 403, 404];
 
-      if (status >= 500) {
-        return Toast.show({
-          type: 'error',
-          text1: 'Server error. Please try again.',
-        });
-      }
+        if (status >= 500) {
+          return Toast.show({
+            type: 'error',
+            text1: 'Server error. Please try again.',
+          });
+        }
 
-      if (status === 401) {
-        Toast.show({
-          type: 'info',
-          text1: 'Token expired. Logging out...',
-        });
-        await EncryptedStorage.removeItem('accessToken');
-      }
+        if (status === 401) {
+          Toast.show({
+            type: 'info',
+            text1: 'Token expired. Logging out...',
+          });
+          await EncryptedStorage.removeItem('accessToken');
+        }
 
-      if (commonClientErrors.includes(status)) {
-        Toast.show({
-          type: 'error',
-          text1: error.errorMessage || 'Failed to fetch data.',
-        });
+        if (commonClientErrors.includes(status)) {
+          Toast.show({
+            type: 'error',
+            text1: error.errorMessage || 'Failed to fetch data.',
+          });
+        }
+      } finally {
+        isLoadingRef.current = false;
+        setIsLoading(false);
+        setIsLoadingMore(false);
       }
-    } finally {
-      setIsLoading(false);
-      setIsLoadingMore(false);
-    }
-  };
+    },
+    [],
+  );
 
   // Debounced search
-
   useEffect(() => {
-    if (debounceTimer) {
-      clearTimeout(debounceTimer);
+    if (debounceTimer.current) {
+      clearTimeout(debounceTimer.current);
     }
 
-    const timer = setTimeout(() => {
+    debounceTimer.current = setTimeout(() => {
       fetchSearchData(1, searchQuery);
     }, 500);
 
-    setDebounceTimer(timer);
-
     return () => {
-      if (timer) {
-        clearTimeout(timer);
+      if (debounceTimer.current) {
+        clearTimeout(debounceTimer.current);
       }
     };
-  }, [searchQuery]);
+  }, [searchQuery, fetchSearchData]);
 
   useEffect(() => {
     if (searchData.length > 0 && searchData[0].contentType === 'post') {
-      setFocusedPostId(searchData[0]._id);
+      const newId = searchData[0]._id;
+      setFocusedPostId(prevId => (prevId !== newId ? newId : prevId));
     }
   }, [searchData]);
 
   useFocusEffect(
     useCallback(() => {
-      setSearchQuery('');
-      setSearchData([])
-      setCurrentPage(1)
-    }, []),
+      // When Search screen gains focus
+      const parent = navigation.getParent();
+      const parentState = parent?.getState();
+
+      if (parentState) {
+        const currentRoute = parentState.routes[parentState.index];
+
+        let currentTabName = currentRoute.name;
+
+        // If we're inside the Tabs navigator, get the actual tab name
+        if (currentRoute.name === 'Tabs' && currentRoute.state) {
+          const tabState = currentRoute.state;
+          currentTabName = tabState.routes[tabState.index]?.name;
+        }
+
+        // console.log(
+        //   'Current Tab:',
+        //   currentTabName,
+        //   'Previous Tab:',
+        //   previousTabRef.current,
+        // );
+
+        // Only clear if previous location was a DIFFERENT TAB (not a stack screen)
+        const tabNames = [
+          'Home',
+          'Create',
+          'Search',
+          'Profile',
+          'Notification',
+        ];
+        const wasPreviouslyOnDifferentTab =
+          tabNames.includes(previousTabRef.current) &&
+          previousTabRef.current !== 'Search';
+
+        if (wasPreviouslyOnDifferentTab && currentTabName === 'Search') {
+          setSearchQuery('');
+          setSearchData([]);
+          setCurrentPage(1);
+        }
+
+        // Update the previous tab reference
+        previousTabRef.current = currentTabName;
+      }
+
+      return () => {
+        // When Search loses focus, record the current location
+        const parent = navigation.getParent();
+        const parentState = parent?.getState();
+
+        if (parentState) {
+          const currentRoute = parentState.routes[parentState.index];
+
+          let currentTabName = currentRoute.name;
+
+          // If we're inside the Tabs navigator, get the actual tab name
+          if (currentRoute.name === 'Tabs' && currentRoute.state) {
+            const tabState = currentRoute.state;
+            currentTabName = tabState.routes[tabState.index]?.name;
+          }
+
+          previousTabRef.current = currentTabName;
+          console.log(
+            'Cleanup - Setting previous location to:',
+            currentTabName,
+          );
+        }
+      };
+    }, [navigation]),
   );
 
   // Detect which post is visible
@@ -139,10 +213,15 @@ const SearchScreen = ({bottomSheetRef}) => {
 
   // Infinite Scroll
   const handleLoadMore = useCallback(() => {
-    if (!isLoadingMore && !isLoading && hasMore) {
+    if (
+      !isLoadingMore &&
+      !isLoadingRef.current &&
+      hasMore &&
+      searchQuery.length > 0
+    ) {
       fetchSearchData(currentPage + 1, searchQuery);
     }
-  }, [isLoadingMore, isLoading, hasMore, currentPage]);
+  }, [isLoadingMore, hasMore, currentPage, searchQuery, fetchSearchData]);
 
   const renderItem = useCallback(
     ({item}) =>
@@ -165,7 +244,9 @@ const SearchScreen = ({bottomSheetRef}) => {
         />
       ) : (
         <TouchableOpacity
-          // onPress={() => handleSelectUser(item)}
+          onPress={() =>
+            navigation.navigate('VisitProfile', {targetUserId: item._id})
+          }
           style={styles.userItem}>
           <View style={styles.cardContainer}>
             <Image
@@ -183,11 +264,27 @@ const SearchScreen = ({bottomSheetRef}) => {
           </View>
         </TouchableOpacity>
       ),
-    [focusedPostId, bottomSheetRef],
+    [focusedPostId, bottomSheetRef, navigation],
+  );
+
+  const keyExtractor = useCallback(item => item._id, []);
+
+  const ItemSeparatorComponent = useCallback(
+    () => <View style={styles.separator} />,
+    [],
+  );
+
+  // Move this outside and make it stable
+  const emptyText =
+    searchQuery.length === 0 ? 'Start Searching' : 'No matching data';
+
+  const ListEmptyComponent = useCallback(
+    () => <Text style={styles.emptyText}>{emptyText}</Text>,
+    [emptyText],
   );
 
   const renderContent = () => {
-    if (isLoading) {
+    if (isLoading && searchData.length === 0) {
       return (
         <ActivityIndicator
           size="large"
@@ -200,14 +297,10 @@ const SearchScreen = ({bottomSheetRef}) => {
     return (
       <FlatList
         data={searchData}
-        keyExtractor={item => item._id}
+        keyExtractor={keyExtractor}
         renderItem={renderItem}
-        ItemSeparatorComponent={() => <View style={styles.separator} />}
-        ListEmptyComponent={() => (
-          <Text style={styles.emptyText}>
-            {searchData.length === 0 ? 'Start Searching' : 'No matching data'}
-          </Text>
-        )}
+        ItemSeparatorComponent={ItemSeparatorComponent}
+        ListEmptyComponent={ListEmptyComponent}
         onEndReached={handleLoadMore}
         onEndReachedThreshold={0.2}
         maxToRenderPerBatch={5}
