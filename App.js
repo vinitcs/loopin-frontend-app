@@ -1,5 +1,5 @@
 import React, {useEffect} from 'react';
-import {StyleSheet, View, Text} from 'react-native';
+import {StyleSheet, View, Text, StatusBar} from 'react-native';
 import {SafeAreaProvider, SafeAreaView} from 'react-native-safe-area-context';
 import SplashScreen from 'react-native-splash-screen';
 import {Provider} from 'react-redux';
@@ -90,7 +90,10 @@ const App = () => {
       <SafeAreaProvider>
         <Provider store={store}>
           <SafeAreaWrapper>
-            {/* <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} /> */}
+            <StatusBar
+              barStyle="dark-content"
+              // barStyle={isDarkMode ? 'light-content' : 'dark-content'}
+            />
             <RootNavigation />
             <Toast config={toastConfig} />
           </SafeAreaWrapper>

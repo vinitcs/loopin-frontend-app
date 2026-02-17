@@ -4,7 +4,6 @@ import EncryptedStorage from 'react-native-encrypted-storage';
 import {useDispatch, useSelector} from 'react-redux';
 import SplashScreen from '../screens/SplashScreen';
 import {login, setUserRoles, logout} from '../redux/slices/authSlice';
-import {StatusBar} from 'react-native';
 import {NavigationContainer} from '@react-navigation/native';
 import AppStack from './AppStack';
 import AuthStack from './AuthStack';
@@ -73,10 +72,6 @@ const RootNavigation = () => {
         <SplashScreen />
       ) : (
         <NavigationContainer>
-          <StatusBar
-            backgroundColor={colors.Primary}
-            barStyle="dark-content"
-          />
           {isAuthenticated ? <AppStack /> : <AuthStack />}
         </NavigationContainer>
       )}
