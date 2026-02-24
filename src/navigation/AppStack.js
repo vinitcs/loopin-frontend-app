@@ -22,6 +22,7 @@ import SearchScreen from '../screens/SearchScreen';
 import AppBottomSheet from '../components/Custom/AppBottomSheet';
 import EditProfileScreen from '../screens/EditProfileScreen';
 import EditNametagScreen from '../screens/EditNametagScreen';
+import UserConnectionsScreen from '../screens/UserConnectionsScreen';
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
@@ -151,6 +152,9 @@ const AppStack = () => {
         </Stack.Screen>
         <Stack.Screen name="EditNametag">
           {props => <EditNametagScreen />}
+        </Stack.Screen>
+        <Stack.Screen name="UserConnections">
+          {props => <UserConnectionsScreen {...props}/>}
         </Stack.Screen>
       </Stack.Navigator>
 
