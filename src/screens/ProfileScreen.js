@@ -15,7 +15,7 @@ import {logout} from '../redux/slices/authSlice';
 import EncryptedStorage from 'react-native-encrypted-storage';
 import api from '../api/apiInstance';
 import {useDispatch, useSelector} from 'react-redux';
-import {useFocusEffect} from '@react-navigation/native';
+import {useFocusEffect, useNavigation} from '@react-navigation/native';
 import {colors} from '../theme/colors/colors';
 import Header from '../components/Custom/Header';
 import {fonts} from '../theme/fonts/fonts';
@@ -49,6 +49,8 @@ const ProfileScreen = ({bottomSheetRef}) => {
 
   const limit = 10;
   const isFetchingRef = useRef(false);
+
+  const navigation = useNavigation();
 
   console.log('log user data:::', profileData);
 
@@ -326,18 +328,30 @@ const ProfileScreen = ({bottomSheetRef}) => {
                   </Text>
                   <Text style={styles.statsLabel}>Posts</Text>
                 </View>
-                <View style={styles.profileStatsPair}>
+                <TouchableOpacity
+                  style={styles.profileStatsPair}
+                  onPress={() =>
+                    navigation.navigate('UserConnections', {
+                      type: 'followers',
+                    })
+                  }>
                   <Text style={styles.statsValue}>
                     {profileData?.followersCount}
                   </Text>
                   <Text style={styles.statsLabel}>Followers</Text>
-                </View>
-                <View style={styles.profileStatsPair}>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={styles.profileStatsPair}
+                  onPress={() =>
+                    navigation.navigate('UserConnections', {
+                      type: 'followings',
+                    })
+                  }>
                   <Text style={styles.statsValue}>
                     {profileData?.followingCount}
                   </Text>
                   <Text style={styles.statsLabel}>Followings</Text>
-                </View>
+                </TouchableOpacity>
               </View>
             </View>
           </View>
@@ -605,7 +619,7 @@ const styles = StyleSheet.create({
   bioText: {
     fontSize: 12,
     fontFamily: fonts.Medium,
-    color: colors.Text1
+    color: colors.Text1,
   },
   bioExpandbtn: {
     alignSelf: 'flex-start',
