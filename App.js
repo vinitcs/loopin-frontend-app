@@ -91,6 +91,7 @@ const App = () => {
         <Provider store={store}>
           <SafeAreaWrapper>
             <StatusBar
+              backgroundColor={colors.Background1}
               barStyle="dark-content"
               // barStyle={isDarkMode ? 'light-content' : 'dark-content'}
             />
